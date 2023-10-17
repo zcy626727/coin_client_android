@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
+import androidx.compose.material.icons.filled.PersonPin
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -69,6 +70,7 @@ fun CoinNavigationRail(
     selectedDestination: String,
     navigationContentPosition: CoinNavigationContentPosition,
     navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit,
+    navigatePageDestination: (String) -> Unit,
     onDrawerClicked: () -> Unit = {},
 ) {
     NavigationRail(
@@ -77,32 +79,31 @@ fun CoinNavigationRail(
     ) {
         // TODO remove custom nav rail positioning when NavRail component supports it. ticket : b/232495216
         Layout(
-            modifier = Modifier.widthIn(max = 80.dp),
-            content = {
+            modifier = Modifier.widthIn(max = 80.dp), content = {
                 Column(
                     modifier = Modifier.layoutId(LayoutType.HEADER),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    NavigationRailItem(
-                        selected = false,
-                        onClick = onDrawerClicked,
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = stringResource(id = R.string.navigation_drawer)
-                            )
-                        }
-                    )
+                    NavigationRailItem(selected = false, onClick = onDrawerClicked, icon = {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(id = R.string.navigation_drawer)
+                        )
+                    })
                     FloatingActionButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigatePageDestination(CoinRoute.Account)
+                            onDrawerClicked()
+
+                        },
                         modifier = Modifier.padding(top = 8.dp, bottom = 32.dp),
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(id = R.string.edit),
+                            imageVector = Icons.Default.PersonPin,
+                            contentDescription = stringResource(id = R.string.account),
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -116,8 +117,7 @@ fun CoinNavigationRail(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-                        NavigationRailItem(
-                            selected = selectedDestination == coinDestination.route,
+                        NavigationRailItem(selected = selectedDestination == coinDestination.route,
                             onClick = { navigateToTopLevelDestination(coinDestination) },
                             icon = {
                                 Icon(
@@ -126,33 +126,29 @@ fun CoinNavigationRail(
                                         id = coinDestination.iconTextId
                                     )
                                 )
-                            }
-                        )
+                            })
                     }
                 }
-            },
-            measurePolicy = navigationMeasurePolicy(navigationContentPosition)
+            }, measurePolicy = navigationMeasurePolicy(navigationContentPosition)
         )
     }
 }
 
 @Composable
 fun CoinBottomNavigationBar(
-    selectedDestination: String,
-    navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit
+    selectedDestination: String, navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit
 ) {
+
     NavigationBar(modifier = Modifier.fillMaxWidth()) {
         TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-            NavigationBarItem(
-                selected = selectedDestination == coinDestination.route,
+            NavigationBarItem(selected = selectedDestination == coinDestination.route,
                 onClick = { navigateToTopLevelDestination(coinDestination) },
                 icon = {
                     Icon(
                         imageVector = coinDestination.selectedIcon,
                         contentDescription = stringResource(id = coinDestination.iconTextId)
                     )
-                }
-            )
+                })
         }
     }
 }
@@ -163,28 +159,30 @@ fun PermanentNavigationDrawerContent(
     selectedDestination: String,
     navigationContentPosition: CoinNavigationContentPosition,
     navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit,
-) {
+    navigatePageDestination: (String) -> Unit,
+
+    ) {
     PermanentDrawerSheet(modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp)) {
         // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
         Layout(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp),
-            content = {
+                .padding(16.dp), content = {
                 Column(
                     modifier = Modifier.layoutId(LayoutType.HEADER),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        modifier = Modifier
-                            .padding(16.dp),
+                        modifier = Modifier.padding(16.dp),
                         text = stringResource(id = R.string.app_name).uppercase(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                     ExtendedFloatingActionButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigatePageDestination(CoinRoute.Account)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp, bottom = 40.dp),
@@ -192,12 +190,12 @@ fun PermanentNavigationDrawerContent(
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(id = R.string.edit),
+                            imageVector = Icons.Default.PersonPin,
+                            contentDescription = stringResource(id = R.string.account),
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = stringResource(id = R.string.compose),
+                            text = stringResource(id = R.string.account),
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center
                         )
@@ -211,8 +209,7 @@ fun PermanentNavigationDrawerContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-                        NavigationDrawerItem(
-                            selected = selectedDestination == coinDestination.route,
+                        NavigationDrawerItem(selected = selectedDestination == coinDestination.route,
                             label = {
                                 Text(
                                     text = stringResource(id = coinDestination.iconTextId),
@@ -230,12 +227,10 @@ fun PermanentNavigationDrawerContent(
                             colors = NavigationDrawerItemDefaults.colors(
                                 unselectedContainerColor = Color.Transparent
                             ),
-                            onClick = { navigateToTopLevelDestination(coinDestination) }
-                        )
+                            onClick = { navigateToTopLevelDestination(coinDestination) })
                     }
                 }
-            },
-            measurePolicy = navigationMeasurePolicy(navigationContentPosition)
+            }, measurePolicy = navigationMeasurePolicy(navigationContentPosition)
         )
     }
 }
@@ -246,6 +241,7 @@ fun ModalNavigationDrawerContent(
     selectedDestination: String,
     navigationContentPosition: CoinNavigationContentPosition,
     navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit,
+    navigatePageDestination: (String) -> Unit,
     onDrawerClicked: () -> Unit = {}
 ) {
     ModalDrawerSheet {
@@ -253,8 +249,7 @@ fun ModalNavigationDrawerContent(
         Layout(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp),
-            content = {
+                .padding(16.dp), content = {
                 Column(
                     modifier = Modifier.layoutId(LayoutType.HEADER),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -281,7 +276,10 @@ fun ModalNavigationDrawerContent(
                     }
 
                     ExtendedFloatingActionButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navigatePageDestination(CoinRoute.Account)
+                            onDrawerClicked()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp, bottom = 40.dp),
@@ -289,12 +287,12 @@ fun ModalNavigationDrawerContent(
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(id = R.string.edit),
+                            imageVector = Icons.Default.PersonPin,
+                            contentDescription = stringResource(id = R.string.account),
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = stringResource(id = R.string.compose),
+                            text = stringResource(id = R.string.account),
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center
                         )
@@ -308,8 +306,7 @@ fun ModalNavigationDrawerContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-                        NavigationDrawerItem(
-                            selected = selectedDestination == coinDestination.route,
+                        NavigationDrawerItem(selected = selectedDestination == coinDestination.route,
                             label = {
                                 Text(
                                     text = stringResource(id = coinDestination.iconTextId),
@@ -327,12 +324,10 @@ fun ModalNavigationDrawerContent(
                             colors = NavigationDrawerItemDefaults.colors(
                                 unselectedContainerColor = Color.Transparent
                             ),
-                            onClick = { navigateToTopLevelDestination(coinDestination) }
-                        )
+                            onClick = { navigateToTopLevelDestination(coinDestination) })
                     }
                 }
-            },
-            measurePolicy = navigationMeasurePolicy(navigationContentPosition)
+            }, measurePolicy = navigationMeasurePolicy(navigationContentPosition)
         )
     }
 }

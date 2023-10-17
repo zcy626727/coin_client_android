@@ -5,6 +5,7 @@
     <string name="tab_home">Home</string>
     <string name="tab_invest">Invest</string>
     <string name="tab_account">Account</string>
+    <string name="tab_asset">Asset</string>
     <string name="tab_quiz">Quiz</string>
 
     <string name="profile">Profile</string>
@@ -12,8 +13,7 @@
     <string name="reply">Reply</string>
     <string name="reply_all">Reply All</string>
 
-    <string name="edit">Edit</string>
-    <string name="compose">Compose</string>
+    <string name="account">账户信息</string>
 
     <string name="empty_screen_title">Screen under construction</string>
     <string name="empty_screen_subtitle">This screen is still under construction. This sample will help you learn about adaptive layouts in Jetpack Compose</string>

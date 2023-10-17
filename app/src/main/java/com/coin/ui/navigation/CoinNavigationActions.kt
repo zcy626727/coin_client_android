@@ -19,9 +19,13 @@ package com.coin.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.CurrencyExchange
+import androidx.compose.material.icons.filled.Cyclone
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,10 +34,13 @@ import androidx.navigation.NavHostController
 import com.coin.R
 
 object CoinRoute {
+    //一级路由
     const val HOME = "Home"
     const val QUIZ = "Quiz"
     const val INVEST = "Invest"
-    const val ACCOUNT = "Account"
+    const val ASSET = "asset"
+
+    const val Account = "account"
 }
 
 data class CoinTopLevelDestination(
@@ -46,17 +53,26 @@ data class CoinTopLevelDestination(
 class CoinNavigationActions(private val navController: NavHostController) {
 
     fun navigateTo(destination: CoinTopLevelDestination) {
+        // 路由跳转
         navController.navigate(destination.route) {
-            // Pop up to the start destination of the graph to
-            // avoid building up a large stack of destinations
-            // on the back stack as users select items
+            // 弹出到图形的起始目标，以避免在用户选择项目时在后退堆栈上建立大型目标堆栈
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
-            // Avoid multiple copies of the same destination when
-            // reselecting the same item
+            // 重新选择同一项目时避免同一目标的多个副本
             launchSingleTop = true
-            // Restore state when reselecting a previously selected item
+            // 重新选择先前选定的项目时恢复状态
+            restoreState = true
+        }
+    }
+
+    fun navigateTo(route: String) {
+        // 路由跳转
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
             restoreState = true
         }
     }
@@ -71,21 +87,29 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     ),
     CoinTopLevelDestination(
         route = CoinRoute.INVEST,
-        selectedIcon = Icons.Default.Inventory,
+        selectedIcon = Icons.Default.CurrencyExchange,
         unselectedIcon = Icons.Default.Article,
         iconTextId = R.string.tab_invest
     ),
     CoinTopLevelDestination(
         route = CoinRoute.QUIZ,
-        selectedIcon = Icons.Default.AutoAwesome,
+        selectedIcon = Icons.Default.Cyclone,
         unselectedIcon = Icons.Outlined.ChatBubbleOutline,
         iconTextId = R.string.tab_quiz
     ),
     CoinTopLevelDestination(
-        route = CoinRoute.ACCOUNT,
-        selectedIcon = Icons.Default.People,
+        route = CoinRoute.ASSET,
+        selectedIcon = Icons.Default.CreditCard,
         unselectedIcon = Icons.Default.People,
         iconTextId = R.string.tab_account
     )
-
 )
+
+
+fun isTopNavigator(currentDestination:String?): Boolean {
+    if (currentDestination==null) return false;
+    for (topLevelDestination in TOP_LEVEL_DESTINATIONS) {
+        if (topLevelDestination.route == currentDestination) return true
+    }
+    return false;
+}

@@ -62,6 +62,7 @@ dependencies {
 
     implementation("androidx.compose.material3:material3-window-size-class")
     implementation("androidx.compose.material:material-icons-extended")
+    // 导航
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
 

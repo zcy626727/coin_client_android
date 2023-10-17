@@ -1,5 +1,6 @@
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import com.coin.ui.navigation.CoinNavigationRail
 import com.coin.ui.navigation.CoinRoute
 import com.coin.ui.navigation.ModalNavigationDrawerContent
 import com.coin.ui.navigation.PermanentNavigationDrawerContent
+import com.coin.ui.navigation.isTopNavigator
 import com.coin.ui.utils.CoinNavigationContentPosition
 import com.coin.ui.utils.CoinNavigationType
 import kotlinx.coroutines.launch
@@ -84,6 +86,8 @@ private fun CoinNavigationWrapper(
                 selectedDestination = selectedDestination,
                 navigationContentPosition = navigationContentPosition,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
+                navigatePageDestination = navigationActions::navigateTo,
+
             )
         }) {
             CoinAppContent(
@@ -96,6 +100,7 @@ private fun CoinNavigationWrapper(
                 ModalNavigationDrawerContent(selectedDestination = selectedDestination,
                     navigationContentPosition = navigationContentPosition,
                     navigateToTopLevelDestination = navigationActions::navigateTo,
+                    navigatePageDestination = navigationActions::navigateTo,
                     onDrawerClicked = {
                         scope.launch {
                             drawerState.close()
@@ -110,6 +115,7 @@ private fun CoinNavigationWrapper(
                         selectedDestination = selectedDestination,
                         navigationContentPosition = navigationContentPosition,
                         navigateToTopLevelDestination = navigationActions::navigateTo,
+                        navigatePageDestination = navigationActions::navigateTo,
                     ) {
                         scope.launch {
                             drawerState.open()
@@ -119,14 +125,17 @@ private fun CoinNavigationWrapper(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.inverseOnSurface)
+                        .background(MaterialTheme.colorScheme.inverseOnSurface),
+                    verticalArrangement = Arrangement.Bottom
                 ) {
                     CoinAppContent(
                         navController = navController,
                         modifier = Modifier.weight(1f),
                     )
                     //底部导肮内容
-                    AnimatedVisibility(visible = navigationType == CoinNavigationType.BOTTOM_NAVIGATION) {
+                    AnimatedVisibility(visible = (navigationType == CoinNavigationType.BOTTOM_NAVIGATION)&& isTopNavigator(
+                        navController.currentDestination?.route
+                    )) {
                         CoinBottomNavigationBar(
                             selectedDestination = selectedDestination,
                             navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -160,8 +169,11 @@ fun CoinAppContent(
         composable(CoinRoute.QUIZ) {
             Text(text = "内容3")
         }
-        composable(CoinRoute.ACCOUNT) {
+        composable(CoinRoute.ASSET) {
             Text(text = "内容4")
+        }
+        composable(CoinRoute.Account) {
+            Text(text = "用户信息")
         }
     }
 }
