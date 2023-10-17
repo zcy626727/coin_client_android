@@ -17,17 +17,12 @@
 package com.coin.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material.icons.filled.Cyclone
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material.icons.filled.Inventory
-import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.filled.Webhook
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Webhook
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -36,11 +31,10 @@ import com.coin.R
 object CoinRoute {
     //一级路由
     const val HOME = "Home"
-    const val QUIZ = "Quiz"
-    const val INVEST = "Invest"
-    const val ASSET = "asset"
+    const val MARKET = "Market"
+    const val ASSET = "Asset"
 
-    const val Account = "account"
+    const val Account = "Account"
 }
 
 data class CoinTopLevelDestination(
@@ -57,7 +51,7 @@ class CoinNavigationActions(private val navController: NavHostController) {
         navController.navigate(destination.route) {
             // 弹出到图形的起始目标，以避免在用户选择项目时在后退堆栈上建立大型目标堆栈
             popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+                saveState = false
             }
             // 重新选择同一项目时避免同一目标的多个副本
             launchSingleTop = true
@@ -82,26 +76,20 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     CoinTopLevelDestination(
         route = CoinRoute.HOME,
         selectedIcon = Icons.Default.Home,
-        unselectedIcon = Icons.Default.Inbox,
+        unselectedIcon = Icons.Outlined.Home,
         iconTextId = R.string.tab_home
     ),
     CoinTopLevelDestination(
-        route = CoinRoute.INVEST,
-        selectedIcon = Icons.Default.CurrencyExchange,
-        unselectedIcon = Icons.Default.Article,
-        iconTextId = R.string.tab_invest
-    ),
-    CoinTopLevelDestination(
-        route = CoinRoute.QUIZ,
-        selectedIcon = Icons.Default.Cyclone,
-        unselectedIcon = Icons.Outlined.ChatBubbleOutline,
-        iconTextId = R.string.tab_quiz
+        route = CoinRoute.MARKET,
+        selectedIcon = Icons.Default.Webhook,
+        unselectedIcon = Icons.Outlined.Webhook,
+        iconTextId = R.string.tab_market
     ),
     CoinTopLevelDestination(
         route = CoinRoute.ASSET,
-        selectedIcon = Icons.Default.CreditCard,
-        unselectedIcon = Icons.Default.People,
-        iconTextId = R.string.tab_account
+        selectedIcon = Icons.Default.AccountBalanceWallet,
+        unselectedIcon = Icons.Outlined.AccountBalanceWallet,
+        iconTextId = R.string.tab_asset
     )
 )
 

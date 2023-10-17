@@ -16,50 +16,33 @@
 
 package com.coin.ui.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.PersonPin
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.PermanentDrawerSheet
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import com.coin.R
@@ -77,7 +60,6 @@ fun CoinNavigationRail(
         modifier = Modifier.fillMaxHeight(),
         containerColor = MaterialTheme.colorScheme.inverseOnSurface
     ) {
-        // TODO remove custom nav rail positioning when NavRail component supports it. ticket : b/232495216
         Layout(
             modifier = Modifier.widthIn(max = 80.dp), content = {
                 Column(
@@ -150,185 +132,6 @@ fun CoinBottomNavigationBar(
                     )
                 })
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PermanentNavigationDrawerContent(
-    selectedDestination: String,
-    navigationContentPosition: CoinNavigationContentPosition,
-    navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit,
-    navigatePageDestination: (String) -> Unit,
-
-    ) {
-    PermanentDrawerSheet(modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp)) {
-        // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
-        Layout(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp), content = {
-                Column(
-                    modifier = Modifier.layoutId(LayoutType.HEADER),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = stringResource(id = R.string.app_name).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    ExtendedFloatingActionButton(
-                        onClick = {
-                            navigatePageDestination(CoinRoute.Account)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 40.dp),
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PersonPin,
-                            contentDescription = stringResource(id = R.string.account),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.account),
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .layoutId(LayoutType.CONTENT)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-                        NavigationDrawerItem(selected = selectedDestination == coinDestination.route,
-                            label = {
-                                Text(
-                                    text = stringResource(id = coinDestination.iconTextId),
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = coinDestination.selectedIcon,
-                                    contentDescription = stringResource(
-                                        id = coinDestination.iconTextId
-                                    )
-                                )
-                            },
-                            colors = NavigationDrawerItemDefaults.colors(
-                                unselectedContainerColor = Color.Transparent
-                            ),
-                            onClick = { navigateToTopLevelDestination(coinDestination) })
-                    }
-                }
-            }, measurePolicy = navigationMeasurePolicy(navigationContentPosition)
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ModalNavigationDrawerContent(
-    selectedDestination: String,
-    navigationContentPosition: CoinNavigationContentPosition,
-    navigateToTopLevelDestination: (CoinTopLevelDestination) -> Unit,
-    navigatePageDestination: (String) -> Unit,
-    onDrawerClicked: () -> Unit = {}
-) {
-    ModalDrawerSheet {
-        // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
-        Layout(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp), content = {
-                Column(
-                    modifier = Modifier.layoutId(LayoutType.HEADER),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.app_name).uppercase(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        IconButton(onClick = onDrawerClicked) {
-                            Icon(
-                                imageVector = Icons.Default.MenuOpen,
-                                contentDescription = stringResource(id = R.string.navigation_drawer)
-                            )
-                        }
-                    }
-
-                    ExtendedFloatingActionButton(
-                        onClick = {
-                            navigatePageDestination(CoinRoute.Account)
-                            onDrawerClicked()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 40.dp),
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PersonPin,
-                            contentDescription = stringResource(id = R.string.account),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.account),
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .layoutId(LayoutType.CONTENT)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { coinDestination ->
-                        NavigationDrawerItem(selected = selectedDestination == coinDestination.route,
-                            label = {
-                                Text(
-                                    text = stringResource(id = coinDestination.iconTextId),
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = coinDestination.selectedIcon,
-                                    contentDescription = stringResource(
-                                        id = coinDestination.iconTextId
-                                    )
-                                )
-                            },
-                            colors = NavigationDrawerItemDefaults.colors(
-                                unselectedContainerColor = Color.Transparent
-                            ),
-                            onClick = { navigateToTopLevelDestination(coinDestination) })
-                    }
-                }
-            }, measurePolicy = navigationMeasurePolicy(navigationContentPosition)
-        )
     }
 }
 

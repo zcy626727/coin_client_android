@@ -2,11 +2,9 @@
     <string name="app_name">Coin Client Android</string>
     <string name="navigation_drawer">Navigation Drawer</string>
 
-    <string name="tab_home">Home</string>
-    <string name="tab_invest">Invest</string>
-    <string name="tab_account">Account</string>
-    <string name="tab_asset">Asset</string>
-    <string name="tab_quiz">Quiz</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_market">市场</string>
+    <string name="tab_asset">资产</string>
 
     <string name="profile">Profile</string>
     <string name="search">Search</string>

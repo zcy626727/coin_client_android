@@ -8,7 +8,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -24,12 +23,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.coin.ui.account.AccountDrawerContent
 import com.coin.ui.navigation.CoinBottomNavigationBar
 import com.coin.ui.navigation.CoinNavigationActions
 import com.coin.ui.navigation.CoinNavigationRail
 import com.coin.ui.navigation.CoinRoute
-import com.coin.ui.navigation.ModalNavigationDrawerContent
-import com.coin.ui.navigation.PermanentNavigationDrawerContent
 import com.coin.ui.navigation.isTopNavigator
 import com.coin.ui.utils.CoinNavigationContentPosition
 import com.coin.ui.utils.CoinNavigationType
@@ -41,10 +39,10 @@ fun CoinApp(
 ) {
     //导航类型
     val navigationType = when (windowSize.widthSizeClass) {
-        //正常屏幕大小
         WindowWidthSizeClass.Compact -> CoinNavigationType.BOTTOM_NAVIGATION
-        WindowWidthSizeClass.Medium -> CoinNavigationType.NAVIGATION_RAIL
-        WindowWidthSizeClass.Expanded -> CoinNavigationType.PERMANENT_NAVIGATION_DRAWER
+        WindowWidthSizeClass.Medium,
+        WindowWidthSizeClass.Expanded -> CoinNavigationType.NAVIGATION_RAIL
+
         else -> CoinNavigationType.BOTTOM_NAVIGATION
     }
 
@@ -80,24 +78,31 @@ private fun CoinNavigationWrapper(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val selectedDestination = navBackStackEntry?.destination?.route ?: CoinRoute.HOME
 
-    if (navigationType == CoinNavigationType.PERMANENT_NAVIGATION_DRAWER) {//大屏展示
-        PermanentNavigationDrawer(drawerContent = {
-            PermanentNavigationDrawerContent(
+    //侧边导航栏
+    if (navigationType == CoinNavigationType.NAVIGATION_RAIL) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            //侧边栏
+            CoinNavigationRail(
                 selectedDestination = selectedDestination,
                 navigationContentPosition = navigationContentPosition,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 navigatePageDestination = navigationActions::navigateTo,
-
-            )
-        }) {
+            ) {
+                scope.launch {
+                    drawerState.open()
+                }
+            }
             CoinAppContent(
                 navController = navController,
+                modifier = Modifier.weight(1f),
             )
         }
     } else {
         ModalNavigationDrawer(
             drawerContent = {
-                ModalNavigationDrawerContent(selectedDestination = selectedDestination,
+                //移动端抽屉栏
+                AccountDrawerContent(
+                    selectedDestination = selectedDestination,
                     navigationContentPosition = navigationContentPosition,
                     navigateToTopLevelDestination = navigationActions::navigateTo,
                     navigatePageDestination = navigationActions::navigateTo,
@@ -108,42 +113,28 @@ private fun CoinNavigationWrapper(
                     })
             }, drawerState = drawerState
         ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                //侧边内容
-                AnimatedVisibility(visible = navigationType == CoinNavigationType.NAVIGATION_RAIL) {
-                    CoinNavigationRail(
-                        selectedDestination = selectedDestination,
-                        navigationContentPosition = navigationContentPosition,
-                        navigateToTopLevelDestination = navigationActions::navigateTo,
-                        navigatePageDestination = navigationActions::navigateTo,
-                    ) {
-                        scope.launch {
-                            drawerState.open()
-                        }
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.inverseOnSurface),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    CoinAppContent(
-                        navController = navController,
-                        modifier = Modifier.weight(1f),
-                    )
-                    //底部导肮内容
-                    AnimatedVisibility(visible = (navigationType == CoinNavigationType.BOTTOM_NAVIGATION)&& isTopNavigator(
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.inverseOnSurface),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                CoinAppContent(
+                    navController = navController,
+                    modifier = Modifier.weight(1f),
+                )
+                //底部导肮内容
+                AnimatedVisibility(
+                    visible = (navigationType == CoinNavigationType.BOTTOM_NAVIGATION) && isTopNavigator(
                         navController.currentDestination?.route
-                    )) {
-                        CoinBottomNavigationBar(
-                            selectedDestination = selectedDestination,
-                            navigateToTopLevelDestination = navigationActions::navigateTo,
-                        )
-                    }
+                    )
+                ) {
+                    CoinBottomNavigationBar(
+                        selectedDestination = selectedDestination,
+                        navigateToTopLevelDestination = navigationActions::navigateTo,
+                    )
                 }
             }
-
         }
     }
 }
@@ -161,16 +152,13 @@ fun CoinAppContent(
         startDestination = CoinRoute.HOME,
     ) {
         composable(CoinRoute.HOME) {
-            Text(text = "内容")
+            Text(text = "主页")
         }
-        composable(CoinRoute.INVEST) {
-            Text(text = "内容2")
-        }
-        composable(CoinRoute.QUIZ) {
-            Text(text = "内容3")
+        composable(CoinRoute.MARKET) {
+            Text(text = "市场")
         }
         composable(CoinRoute.ASSET) {
-            Text(text = "内容4")
+            Text(text = "财产")
         }
         composable(CoinRoute.Account) {
             Text(text = "用户信息")
