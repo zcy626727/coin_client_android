@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.coin"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.coin"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -64,7 +64,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // 导航
     implementation("androidx.navigation:navigation-compose:2.5.3")
-
+    //加载网络图片
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil:1.4.0")
 
 
     testImplementation("junit:junit:4.13.2")
@@ -74,6 +76,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
 
 
 
